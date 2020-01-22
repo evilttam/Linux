@@ -1,0 +1,6 @@
+To: matthew.jones12@gmail.com
+From: NoReply@noreply.com
+Subject: IP address for naddafinga
+Public IP address	-   50.40.74.130
+Wired IP address	-   192.168.3.8
+Wireless IP address	-   192.168.50.35
