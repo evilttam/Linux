@@ -17,6 +17,14 @@ else
 > $FILE
 fi
 
+
+if [[ $(crontab -l | egrep -v "^(#|$)" | grep -q '/home/pi/Documents/ipaddress.sh'; echo $?) == 1 ]]; then
+echo "crontab exists"
+else
+(crontab -l 2>/dev/null; echo "0 0 * * * /home/pi/Documents/ipaddress.sh") | crontab - &&
+(crontab -l 2>/dev/null; echo "@reboot sleep 60 && /home/pi/Documents/ipaddress.sh") | crontab -
+fi
+
 if test -f "/etc/msmtprc"; then
 echo "/etc/msmtprc is in proper location"
 else
