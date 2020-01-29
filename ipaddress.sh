@@ -7,7 +7,8 @@ FILE="${WD}/ip.txt"
 ip1=""
 ip2=""
 ip3=""
-
+cronjobfile="/home/pi/Documents/cronjob"
+rootcron="/var/spool/cron/crontabs/root"
 # check for and install msmtp if it is not installed
 dpkg -s msmtp 2>/dev/null >/dev/null || sudo apt-get -y install msmtp
 
@@ -17,13 +18,25 @@ else
 > $FILE
 fi
 
-
-if [[ $(crontab -l | egrep -v "^(#|$)" | grep -q '/home/pi/Documents/ipaddress.sh'; echo $?) == 1 ]]; then
-echo "crontab exists"
-else
-(crontab -l 2>/dev/null; echo "0 0 * * * /home/pi/Documents/ipaddress.sh") | crontab - &&
-(crontab -l 2>/dev/null; echo "@reboot sleep 60 && /home/pi/Documents/ipaddress.sh") | crontab -
+rm $cronjobfile
+> $cronjobfile
+if test -f "$rootcron"; then
+echo $rootcron exists
+else 
+> $rootcron
 fi
+crontab -l -u root >> $cronjobfile
+if grep "no crontab for root" $cronjobfile; then
+echo "Cronjob exists"
+fi
+
+if grep -i "/home/pi/Documents/ipaddress.sh" $rootcron; then
+echo "$rootcron contains /home/pi/Documents/ipaddress.sh"
+else
+echo "0 0 * * * /home/pi/Documents/ipaddress.sh" >> $rootcron \n
+echo "@reboot sleep 60 && /home/pi/Documents/ipaddress.sh" >> $rootcron \n
+fi
+
 
 if test -f "/etc/msmtprc"; then
 echo "/etc/msmtprc is in proper location"
